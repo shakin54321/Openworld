@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lantern Line</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#070a0d;color:#ece6d8}
+body{font-family:system-ui,sans-serif;overflow:hidden}
+#boot{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 90% at 30% 40%,#16222b 0%,#0b1116 55%,#070a0d 100%);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+#boot .txt{width:min(760px,92vw);display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+#boot .eyebrow{font:600 13px/1 system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#dcb46a}
+#boot h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(52px,11vw,104px);line-height:.95;margin:0;letter-spacing:.01em}
+#boot h1 span{display:block;color:#f3d79a}
+#boot .tag{margin:0;color:#9aa4a6;line-height:1.55;max-width:46ch;font-size:16px}
+#boot .bar{width:min(620px,88vw);height:3px;background:rgba(236,230,216,.12);border-radius:3px;overflow:hidden}
+#boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#dcb46a,#f3d79a);box-shadow:0 0 14px rgba(243,215,154,.6);transition:width .2s}
+#boot .stat{display:flex;justify-content:space-between;width:min(620px,88vw);font:500 14px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9aa4a6}
+#boot .stat b{color:#ece6d8}
+#boot .tip{min-height:2.9em;color:#7f8b8e;font-size:13.5px;line-height:1.45;max-width:50ch}
+</style>
+</head>
+<body>
+<div id="boot">
+  <div class="txt">
+    <div class="eyebrow">An open-world journey</div>
+    <h1>Lantern<span>Line</span></h1>
+    <p class="tag">Your father lit a chain of beacons across four lands, then vanished. Follow the line, one flame at a time.</p>
+    <div class="stat"><span id="msg">Waking the valley</span><b id="pct">0%</b></div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="tip">Follow the line, one flame at a time.</div>
+  </div>
+</div>
+<script>
+const src='https://lantern-line-atphno42n-shakin1.vercel.app/';
+const fill=document.getElementById('fill'),pct=document.getElementById('pct'),msg=document.getElementById('msg'),boot=document.getElementById('boot');
+const start=performance.now();
+let shown=0;
+function progress(){
+  const elapsed=(performance.now()-start)/1000;
+  const target=Math.min(96,Math.round(elapsed/0.12));
+  shown+=(target-shown)*0.18;
+  fill.style.width=Math.round(shown)+'%';
+  pct.textContent=Math.round(shown)+'%';
+  requestAnimationFrame(progress);
+}
+requestAnimationFrame(progress);
+fetch(src,{cache:'no-store'}).then(r=>r.text()).then(html=>{
+  html=html.replace(/\s*<div class="art" id="art">[\s\S]*?<\/div>\s*(?=<div class="txt">)/,'');
+  html=html.replace('</style>',' #load{flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:18px!important;text-align:center!important} #load .txt{flex:0 1 auto!important;width:min(760px,92vw)!important;max-width:none!important;align-items:center!important;text-align:center!important} #load .tag{max-width:46ch!important} #load .keys{justify-content:center!important} </style>');
+  document.open();
+  document.write(html);
+  document.close();
+}).catch(()=>{
+  msg.textContent='Connection error';
+  pct.textContent='—';
+  fill.style.width='100%';
+});
+</script>
+</body>
+</html>
